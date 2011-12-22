@@ -17,7 +17,7 @@ from AccessControl import ClassSecurityInfo, ModuleSecurityInfo
 from Products.PloneHelpCenter.config import *
 from schemata import HelpCenterBaseSchemaFolderish, HelpCenterContainerSchema
 
-from Products import ATContentTypes
+from Products.ATContentTypes.content import folder
 from PHCFolder import PHCFolder
 from Products.PloneHelpCenter.interfaces import IHelpCenterFolder
 
@@ -41,10 +41,8 @@ TutorialFolderSchema = HelpCenterBaseSchemaFolderish + Schema((
         ),
     ),) + HelpCenterContainerSchema
 
-class HelpCenterTutorialFolder(PHCFolder, ATContentTypes.content.folder.ATFolder):
-    """
-        A tutorial container
-    """
+class HelpCenterTutorialFolder(PHCFolder, folder.ATFolder):
+    """A tutorial container"""
 
     implements(IHelpCenterFolder)
 
@@ -57,9 +55,9 @@ class HelpCenterTutorialFolder(PHCFolder, ATContentTypes.content.folder.ATFolder
     filter_content_types = 1
     allowed_content_types = ('HelpCenterTutorial', )
 
-    typeDescription= 'A Tutorial Section can contain tutorial-length, multi-page documentation.'
-    typeDescMsgId  = 'description_edit_tutorialfolder'
-
+    typeDescription = 'A Tutorial Section can contain tutorial-length, '\
+                      'multi-page documentation.'
+    typeDescMsgId = 'description_edit_tutorialfolder'
 
     security = ClassSecurityInfo()
 

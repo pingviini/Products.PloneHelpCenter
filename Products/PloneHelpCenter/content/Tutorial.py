@@ -8,7 +8,7 @@ except ImportError:
     from Products.Archetypes.public import *
 
 import Products.CMFCore.permissions as CMFCorePermissions
-from Products import ATContentTypes
+from Products.ATContentTypes.content import folder
 from Products.ATContentTypes.content.schemata import finalizeATCTSchema
 
 from Products.PloneHelpCenter.config import *
@@ -16,15 +16,17 @@ from schemata import HelpCenterItemSchemaNarrow
 from PHCContent import PHCContentMixin
 from Products.PloneHelpCenter.interfaces import IHelpCenterNavRoot
 
-TutorialSchema = ATContentTypes.content.folder.ATFolderSchema.copy() + HelpCenterItemSchemaNarrow
+TutorialSchema = folder.ATFolderSchema.copy() + HelpCenterItemSchemaNarrow
+
 if GLOBAL_RIGHTS:
     del TutorialSchema['rights']
+
 finalizeATCTSchema(TutorialSchema, folderish=True, moveDiscussion=False)
-TutorialSchema['nextPreviousEnabled'].defaultMethod = None  
-TutorialSchema['nextPreviousEnabled'].default = True  
+TutorialSchema['nextPreviousEnabled'].defaultMethod = None
+TutorialSchema['nextPreviousEnabled'].default = True
 
 
-class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin):
+class HelpCenterTutorial(folder.ATFolder, PHCContentMixin):
     """A tutorial containing TutorialPages, Files and Images."""
 
     implements(IHelpCenterNavRoot)
@@ -34,28 +36,29 @@ class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin
     meta_type = portal_type = 'HelpCenterTutorial'
     content_icon = 'tutorial_icon.gif'
 
-    typeDescription= 'A Tutorial can contain Tutorial Pages, Images and Files. Index order is decided by the folder order, use the normal up/down arrow in the folder content view to rearrange content.'
-    typeDescMsgId  = 'description_edit_tutorial'
+    typeDescription = 'A Tutorial can contain Tutorial Pages, Images and '\
+                      'Files. Index order is decided by the folder order, '\
+                      'use the normal up/down arrow in the folder content '\
+                      'view to rearrange content.'
+    typeDescMsgId = 'description_edit_tutorial'
 
     security = ClassSecurityInfo()
 
-
-    security.declareProtected(CMFCorePermissions.View, 'getTutorialDescription')
+    security.declareProtected(CMFCorePermissions.View,
+                                'getTutorialDescription')
     def getTutorialDescription(self):
-        """ Returns the description of the Tutorial--convenience method for TutorialPage """
+        """Returns the description of the Tutorial -- convenience method for
+        TutorialPage"""
         return self.Description()
-
 
     security.declareProtected(CMFCorePermissions.View, 'getPages')
     def getPages(self, states=[]):
         """Get items"""
-        criteria = contentFilter = \
-            {'object_provides' : 
-             'Products.PloneHelpCenter.interfaces.IHelpCenterMultiPage',}
+        criteria = {'object_provides':
+             'Products.PloneHelpCenter.interfaces.IHelpCenterMultiPage'}
         if states:
             criteria['review_state'] = states
-        return self.getFolderContents(contentFilter = criteria)
-
+        return self.getFolderContents(contentFilter=criteria)
 
     security.declareProtected(CMFCorePermissions.View, 'getPagePosition')
     def getPagePosition(self, obj, states=[]):
@@ -65,7 +68,6 @@ class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin
             if pages[i].getId == obj.getId():
                 return i
         return None
-
 
     security.declareProtected(CMFCorePermissions.View, 'getTOCSelectOptions')
     def getTOCSelectOptions(self, current=None):
@@ -80,9 +82,9 @@ class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin
         res = []
         cid = current.getId()
         for page in self.getPages():
-            res.append( {'title':page.Title, 'url':page.getURL, 'current':cid==page.id  } )
+            res.append({'title': page.Title, 'url': page.getURL,
+                        'current': cid == page.id})
         return res
-
 
     security.declareProtected(CMFCorePermissions.View, 'getAllPagesURL')
     def getAllPagesURL(self):
@@ -90,12 +92,11 @@ class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin
 
         return "%s/tutorial-all-pages" % self.absolute_url()
 
-
-        security.declareProtected(CMFCorePermissions.View, 'getNextPreviousParentValue')
-        def getNextPreviousParentValue(self):
-            """ always true """
-            return True
-
+    security.declareProtected(CMFCorePermissions.View,
+                                'getNextPreviousParentValue')
+    def getNextPreviousParentValue(self):
+        """ always true """
+        return True
 
     security.declareProtected(CMFCorePermissions.View, 'Rights')
     def Rights(self):
@@ -104,7 +105,6 @@ class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin
             return self.getRawRights()
         else:
             return self.aq_parent.Rights()
-
 
     security.declareProtected(CMFCorePermissions.View, 'Creators')
     def Creators(self):
@@ -116,4 +116,3 @@ class HelpCenterTutorial(ATContentTypes.content.folder.ATFolder, PHCContentMixin
 
 
 registerType(HelpCenterTutorial, PROJECTNAME)
-

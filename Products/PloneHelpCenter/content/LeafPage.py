@@ -17,8 +17,7 @@ except ImportError:
 
 import Products.CMFCore.permissions as CMFCorePermissions
 
-from Products import ATContentTypes
-from Products.ATContentTypes.interface import IATDocument
+from Products.ATContentTypes.content import document
 
 from Products.PloneHelpCenter.config import *
 from PHCContent import HideMetadataFields
@@ -26,13 +25,13 @@ from Products.PloneHelpCenter.interfaces import \
     IHelpCenterMultiPage, IHelpCenterNavRoot
 
 
-LeafPageSchema = ATContentTypes.content.document.ATDocumentSchema.copy()
+LeafPageSchema = document.ATDocumentSchema.copy()
 ATContentTypes.content.schemata.finalizeATCTSchema(LeafPageSchema)
 HideMetadataFields(LeafPageSchema)
 LeafPageSchema['relatedItems'].schemata = 'default'
 
 
-class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
+class HelpCenterLeafPage(document.ATDocument):
     """A page that delegates metadata handling to a parent."""
 
     implements(IHelpCenterMultiPage)
@@ -40,19 +39,19 @@ class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
     schema = LeafPageSchema
 
     archetype_name = 'Page'
-    meta_type='HelpCenterLeafPage'
+    meta_type = 'HelpCenterLeafPage'
     content_icon = 'document_icon.gif'
 
-    typeDescription= 'A Help Center content page.'
-    typeDescMsgId  = 'description_leafpage'
+    typeDescription = 'A Help Center content page.'
+    typeDescMsgId = 'description_leafpage'
 
     security = ClassSecurityInfo()
 
     # Satisfy metadata requirements for items with hidden metadata.
-    
+
     def navRootObject(self):
         """ Find the metadata parent """
-    
+
         parent = aq_parent(aq_inner(self))
         while parent and not IHelpCenterNavRoot.providedBy(parent):
             try:
@@ -60,8 +59,7 @@ class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
             except AttributeError:
                 break
         return parent
-    
-    
+
     security.declareProtected(CMFCorePermissions.View, 'Subject')
     def Subject(self):
         """ get from parent """
@@ -69,7 +67,7 @@ class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
             return self.navRootObject().Subject()
         except AttributeError:
             return
-    
+
     security.declareProtected(CMFCorePermissions.View, 'Rights')
     def Rights(self):
         """ get from parent """
@@ -77,7 +75,7 @@ class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
             return self.navRootObject().Rights()
         except AttributeError:
             return
-    
+
     security.declareProtected(CMFCorePermissions.View, 'Creators')
     def Creators(self):
         """ get from parent """
@@ -85,7 +83,7 @@ class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
             return self.navRootObject().Creators()
         except AttributeError:
             return
-    
+
     security.declareProtected(CMFCorePermissions.View, 'Contributors')
     def Contributors(self):
         """ get from parent """
@@ -93,15 +91,14 @@ class HelpCenterLeafPage(ATContentTypes.content.document.ATDocument):
             return self.navRootObject().Contributors()
         except AttributeError:
             return
-    
+
     security.declareProtected(CMFCorePermissions.View, 'listCreators')
     def listCreators(self):
-        """ List Dublin Core Creator elements - resource authors.
-        """
+        """ List Dublin Core Creator elements - resource authors. """
         try:
             return self.navRootObject().Creators()
         except AttributeError:
             return
 
-        
+
 registerType(HelpCenterLeafPage, PROJECTNAME)

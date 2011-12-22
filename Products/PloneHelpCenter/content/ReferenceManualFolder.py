@@ -13,14 +13,12 @@ except ImportError:
     # No multilingual support
     from Products.Archetypes.public import *
 
-import Products.CMFCore.permissions as CMFCorePermissions
-
-from AccessControl import ClassSecurityInfo, ModuleSecurityInfo
+from AccessControl import ClassSecurityInfo
 from Products.PloneHelpCenter.config import *
 from schemata import HelpCenterBaseSchemaFolderish, HelpCenterContainerSchema
 from PHCFolder import PHCFolder
 
-from Products import ATContentTypes as atct
+from Products.ATContentTypes.content import folder
 from Products.PloneHelpCenter.interfaces import IHelpCenterFolder
 
 ReferenceManualFolderSchema = HelpCenterBaseSchemaFolderish + Schema((
@@ -29,21 +27,22 @@ ReferenceManualFolderSchema = HelpCenterBaseSchemaFolderish + Schema((
         searchable=1,
         required=1,
         accessor="Description",
-        default_content_type = 'text/plain',
-        allowable_content_types = ('text/plain',),
+        default_content_type='text/plain',
+        allowable_content_types=('text/plain',),
         storage=MetadataStorage(),
         widget=TextAreaWidget(
                 description_msgid="phc_desc_folder_referencemanual",
                 description="Description for the reference manual section.",
                 label_msgid="phc_label_folder_referencemanual",
                 label="Description",
-                i18n_domain = "plonehelpcenter",
+                i18n_domain="plonehelpcenter",
                 rows=6,
                 ),
         ),
     ),) + HelpCenterContainerSchema
 
-class HelpCenterReferenceManualFolder(PHCFolder, atct.content.folder.ATFolder):
+
+class HelpCenterReferenceManualFolder(PHCFolder, folder.ATFolder):
     """A simple folderish archetype"""
 
     implements(IHelpCenterFolder)
@@ -57,9 +56,10 @@ class HelpCenterReferenceManualFolder(PHCFolder, atct.content.folder.ATFolder):
     filter_content_types = 1
     allowed_content_types = ('HelpCenterReferenceManual', )
 
-    typeDescription= 'A Reference Manual Section can contain reference manuals for individual projects and larger documentation efforts.'
-    typeDescMsgId  = 'description_edit_referencemanualfolder'
-
+    typeDescription = 'A Reference Manual Section can contain reference '\
+                      'manuals for individual projects and larger '\
+                      'documentation efforts.'
+    typeDescMsgId = 'description_edit_referencemanualfolder'
 
     security = ClassSecurityInfo()
 
@@ -68,10 +68,10 @@ class HelpCenterReferenceManualFolder(PHCFolder, atct.content.folder.ATFolder):
         """
              List IDs of contentish and folderish sub-objects.
              (method is without docstring to disable publishing)
-             
+
              Fix for https://bugs.launchpad.net/zope-cmf/+bug/661834
         """
-        return atct.content.folder.ATFolder.contentIds(self, filter)
+        return folder.ATFolder.contentIds(self, filter)
 
 
 registerType(HelpCenterReferenceManualFolder, PROJECTNAME)

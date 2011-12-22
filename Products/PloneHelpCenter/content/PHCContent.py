@@ -31,16 +31,16 @@ except ImportError:
     except ImportError:
         class HistoryAwareMixin:
             """Dummy class when we can't find the real McCoy"""
-            
-            __implements__ =()
-            actions        =()
+
+            __implements__ = ()
+            actions = ()
 
 
 class PHCContentMixin:
-    """ Provide vocabulary and default methods for HelpCenterItemSchemaNarrow """
+    """ Provide vocabulary and default methods for HelpCenterItemSchemaNarrow
+    """
 
     implements(IHelpCenterContent)
-
     security = ClassSecurityInfo()
 
     security.declareProtected(CMFCorePermissions.View, 'getVersionsVocab')
@@ -59,7 +59,8 @@ class PHCContentMixin:
         else:
             return ()
 
-    security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'SetSections')
+    security.declareProtected(CMFCorePermissions.ModifyPortalContent,
+                                'SetSections')
     def setSections(self, values):
         """set sections"""
 
@@ -72,9 +73,8 @@ class PHCContentMixin:
         for s in values:
             pos = s.find(':')
             if pos >= 0:
-                valueSet.add( s[:pos].strip() )
+                valueSet.add(s[:pos].strip())
         self.sections = tuple(valueSet)
-
 
     security.declareProtected(CMFCorePermissions.View, 'getAudiencesVocab')
     def getAudiencesVocab(self):
@@ -127,7 +127,8 @@ class PHCContentMixin:
             return 0
 
         # Acquire current versions
-        currentVersions = [x.decode('utf-8') for x in self.getCurrentVersions()]
+        currentVersions = [x.decode('utf-8') for x in \
+                            self.getCurrentVersions()]
 
         if not currentVersions:
             return 0
@@ -140,13 +141,13 @@ class PHCContentMixin:
         # Outdated - we didn't match anything
         return 1
 
-    security.declareProtected(CMFCorePermissions.View, 'getRelatedItems') 
+    security.declareProtected(CMFCorePermissions.View, 'getRelatedItems')
     def getRelatedItems(self):
         """method to fetch the referenced items in context of
            config and permissions
         """
         try:
-            objs = [o for o in self.getField('relatedItems').get(self) 
+            objs = [o for o in self.getField('relatedItems').get(self)
                       if self.portal_membership.checkPermission('View', o)]
             return objs
         except:
@@ -156,22 +157,22 @@ class PHCContentMixin:
 def HideOwnershipFields(schema):
     """ Some PHC types should not have their own ownership metadata """
     for fname in ('creators', 'contributors', 'rights'):
-        schema[fname].widget.visible = {'view':'invisible','edit':'invisible'}
+        schema[fname].widget.visible = {'view': 'invisible',
+                                        'edit': 'invisible'}
 
 
 def HideMetadataFields(schema):
     """ Some PHC types should have very little visible metadata """
-    for field in ('creators', 'contributors', 'rights', 'location', 'subject', 'language'):
-        schema[field].widget.visible = {'view':'invisible','edit':'invisible'}
+    for field in ('creators', 'contributors', 'rights', 'location', 'subject',
+                  'language'):
+        schema[field].widget.visible = {'view': 'invisible',
+                                        'edit': 'invisible'}
 
 
 class PHCContent(BrowserDefaultMixin, HistoryAwareMixin, PHCContentMixin):
-    """A simple  mixin class to provide contentish functions 
+    """A simple  mixin class to provide contentish functions
        archetype with no schema defined.
     """
 
-
     security = ClassSecurityInfo()
-
     _at_rename_after_creation = True
-

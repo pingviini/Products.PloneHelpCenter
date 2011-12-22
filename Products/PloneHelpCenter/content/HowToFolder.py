@@ -12,12 +12,11 @@ try:
 except ImportError:
     # No multilingual support
     from Products.Archetypes.public import *
-import Products.CMFCore.permissions as CMFCorePermissions
-from AccessControl import ClassSecurityInfo, ModuleSecurityInfo
+from AccessControl import ClassSecurityInfo
 from Products.PloneHelpCenter.config import *
 from schemata import HelpCenterBaseSchemaFolderish, HelpCenterContainerSchema
 
-from Products import ATContentTypes
+from Products.ATContentTypes.content import folder
 from PHCFolder import PHCFolder
 from Products.PloneHelpCenter.interfaces import IHelpCenterFolder
 
@@ -27,21 +26,22 @@ HowToFolderSchema = HelpCenterBaseSchemaFolderish + Schema((
         searchable=1,
         required=1,
         accessor="Description",
-        default_content_type = 'text/plain',
-        allowable_content_types = ('text/plain',),
+        default_content_type='text/plain',
+        allowable_content_types=('text/plain',),
         storage=MetadataStorage(),
         widget=TextAreaWidget(
                 description_msgid="phc_desc_howto_folder",
                 description="Description for the How-to section.",
                 label_msgid="phc_label_howto_folder",
                 label="Description",
-                i18n_domain = "plonehelpcenter",
+                i18n_domain="plonehelpcenter",
                 rows=6,
                 )
         ),
     )) + HelpCenterContainerSchema
 
-class HelpCenterHowToFolder(PHCFolder, ATContentTypes.content.folder.ATFolder):
+
+class HelpCenterHowToFolder(PHCFolder, folder.ATFolder):
     """A How-to Section can contain how-to documents."""
 
     implements(IHelpCenterFolder)
@@ -55,13 +55,10 @@ class HelpCenterHowToFolder(PHCFolder, ATContentTypes.content.folder.ATFolder):
     filter_content_types = 1
     allowed_content_types = ('HelpCenterHowTo', )
 
-    typeDescription= 'A How-to Section can contain how-to documents.'
-    typeDescMsgId  = 'description_edit_howtofolder'
+    typeDescription = 'A How-to Section can contain how-to documents.'
+    typeDescMsgId = 'description_edit_howtofolder'
 
     security = ClassSecurityInfo()
 
-    # aliases = PHCFolder.aliases.copy()
-    # aliases.update({'(Default)' : 'howtofolder_view',
-    #                 'view'      : 'howtofolder_view'})
 
 registerType(HelpCenterHowToFolder, PROJECTNAME)

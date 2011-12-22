@@ -32,7 +32,7 @@ from Products.PloneHelpCenter.interfaces import IHelpCenter
 
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin, fti_meta_type
+from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from AccessControl import ClassSecurityInfo
 from Products.PloneHelpCenter.config import *
 from Products.CMFPlone.utils import _createObjectByType
