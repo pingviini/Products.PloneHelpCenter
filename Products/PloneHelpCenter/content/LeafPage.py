@@ -18,6 +18,7 @@ except ImportError:
 import Products.CMFCore.permissions as CMFCorePermissions
 
 from Products.ATContentTypes.content import document
+from Products.ATContentTypes.content import schemata
 
 from Products.PloneHelpCenter.config import *
 from PHCContent import HideMetadataFields
@@ -26,7 +27,7 @@ from Products.PloneHelpCenter.interfaces import \
 
 
 LeafPageSchema = document.ATDocumentSchema.copy()
-ATContentTypes.content.schemata.finalizeATCTSchema(LeafPageSchema)
+schemata.finalizeATCTSchema(LeafPageSchema)
 HideMetadataFields(LeafPageSchema)
 LeafPageSchema['relatedItems'].schemata = 'default'
 
