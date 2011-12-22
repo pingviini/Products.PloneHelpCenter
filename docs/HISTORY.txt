@@ -3,6 +3,14 @@ HISTORY
 
 History of changes to PHC (name of developer listed in brackets)::
 
+    PloneHelpCenter 4.0b4 (2011-xx-xx)
+
+    - Images and files works now in HowTo folder
+      [pingviini]
+    
+    - Run code through pep8. Made some fixes and removed unused imports.
+      [pingviini]
+
     PloneHelpCenter 4.0b3 (2011-05-12)
 
     - Clean up package and release
